@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -118,7 +119,8 @@ DATABASES = {
         "PORT": "3306",
     }
 }
-
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -179,6 +181,6 @@ OAUTH2_PROVIDER = {
     "OAUTH2_BACKEND_CLASS": "oauth2_provider.oauth2_backends.JSONOAuthLibCore",
 }
 OAUTH2_INFO = {
-    "client_id": "BtoScOle16fqhrIFymHaPxn4e3lmvAigajlD92vy",
-    "client_secret": "bnz4kMqqQjMrybVP2RLwutE7CdHn1HIU5NQlK8FrgALz9oCWPiD77WeSPZhWZQdKWYcpzRfEAEQzqgHB07HOvm8ajF2HAaUR09YjEUiM8UtvO120xk1shv6VFDRWpsBi",
+    "client_id": "sS38x5A9AwR5IECwtqtX5bWL1jRiaW9YL2JrR4n6",
+    "client_secret": "fCwzwTQ9mkEhLMheraTsrEUVRCxpQNA5IpSjVfimYATx0BBjfnBpDpCcGekLx6XR2BDfFuJOCJY4KFw9Wahaov2P6RaS2MwZEsx4NeIEMmOXrwlKQvBvgnR20NgrEjaQ",
 }
