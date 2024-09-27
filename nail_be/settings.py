@@ -32,6 +32,10 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "nails",
+    "corsheaders",
+    "rest_framework",
+    "django_filters",
+    "oauth2_provider",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
