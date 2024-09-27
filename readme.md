@@ -1,5 +1,7 @@
-Tạo môi trường ảo  
+1. Tạo môi trường ảo  
 `python -m venv venv`  
 `venv\Scripts\activate`  
-Hủy môi trường ảo  
+2. Tạo file requirements.txt  
+`pip freeze > requirements.txt`
+3. Hủy môi trường ảo  
 `deactivate`
