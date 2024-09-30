@@ -3,9 +3,14 @@ from .views import *
 from rest_framework import routers
 
 
-router = routers.DefaultRouter()
-router.register("categories", CategoryView, basename="categories")
-router.register("products", ProductView, basename="products")
 urlpatterns = [
-    path("", include(router.urls)),
+    path("categories/", CategoryView.as_view(), name="category-list"),
+    path("categories/<int:pk>/", CategoryView.as_view(), name="category-detail"),
+    path(
+        "images/<int:product_id>/",
+        ProductImageUploadView.as_view(),
+        name="image-upload",
+    ),
+    path("products/", ProductView.as_view(), name="products-list"),
+    path("products/<int:pk>/", ProductView.as_view(), name="products-detail"),
 ]

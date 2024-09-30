@@ -46,11 +46,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "nail_be.middleware.CustomLoggerMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "nails.middleware.CustomLoggerMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -78,7 +78,7 @@ LOGGING = {
             "handlers": ["console", "file"],
             "level": "INFO",
         },
-        "schedule_be": {
+        "nails": {
             "handlers": ["console", "file"],
             "level": "INFO",
             "propagate": True,
@@ -181,6 +181,6 @@ OAUTH2_PROVIDER = {
     "OAUTH2_BACKEND_CLASS": "oauth2_provider.oauth2_backends.JSONOAuthLibCore",
 }
 OAUTH2_INFO = {
-    "client_id": "sS38x5A9AwR5IECwtqtX5bWL1jRiaW9YL2JrR4n6",
-    "client_secret": "fCwzwTQ9mkEhLMheraTsrEUVRCxpQNA5IpSjVfimYATx0BBjfnBpDpCcGekLx6XR2BDfFuJOCJY4KFw9Wahaov2P6RaS2MwZEsx4NeIEMmOXrwlKQvBvgnR20NgrEjaQ",
+    "client_id": "8Bw7rPpgfgVrGroAWXkN8WC7wm9V7Pi0CHqmfNx5",
+    "client_secret": "NtftTjhzK9aaJO50v0sCTVRdVxgt0ziEYJfoWgWYSE4ezXAgC6kd82OHu2Y78ZWIdYGrvNi92IkJODYEXuiC9ZaoRk6VkKBCuK3aC38pSz8YDFupCt0HWeTQBtDlzQA5",
 }

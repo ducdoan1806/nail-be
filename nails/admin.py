@@ -12,7 +12,6 @@ class ProductsAdmin(admin.ModelAdmin):
         "id",
         "name",
         "detail",
-        "image_url",
         "description",
         "category",
         "created_at",

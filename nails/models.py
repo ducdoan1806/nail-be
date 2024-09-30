@@ -16,7 +16,6 @@ class Products(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     detail = models.TextField(blank=True)
-    image_url = models.ImageField(upload_to="uploads/images/", blank=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,6 +35,18 @@ class ProductDetail(models.Model):
 
     def __str__(self):
         return self.color_name
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Products, related_name="images", on_delete=models.DO_NOTHING
+    )
+    image = models.ImageField(upload_to="uploads/images/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Image for {self.product.name}"
 
 
 class Orders(models.Model):
