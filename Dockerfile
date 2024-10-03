@@ -1,30 +1,23 @@
-# Dockerfile
+# app/Dockerfile
+FROM python:3.9
 
-# Sử dụng Python base image
-FROM python:3.12-slim
-
-# Cài đặt các gói cần thiết để biên dịch mysqlclient
-RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
-    build-essential \
-    pkg-config
-
-# Đặt thư mục làm việc
+# Set the working directory
 WORKDIR /app
 
-# Sao chép file yêu cầu vào container và cài đặt thư viện
-COPY requirements.txt /app/
+# Install system dependencies
+RUN apt-get update && apt-get install -y default-libmysqlclient-dev gcc
+
+# Copy the requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Sao chép mã nguồn dự án vào container
-COPY . /app/
+# Copy the application code
+COPY . .
 
-# Thiết lập biến môi trường
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Run database migrations and then start the application
+ENTRYPOINT ["sh", "-c"]
 
-# Migrate và thu thập các static files
-RUN python manage.py migrate
-
-# Chạy server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Use CMD to run migrations and then start the server
+CMD ["python manage.py migrate && gunicorn --bind 0.0.0.0:8000 nail-be.wsgi:application"]
