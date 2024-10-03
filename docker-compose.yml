@@ -7,6 +7,13 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: mysql://root:Assa1234!!@db:3306/nail
+    depends_on:
+      - db
 volumes:
   db_data:
