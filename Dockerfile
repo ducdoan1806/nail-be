@@ -12,10 +12,9 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update
 RUN apt-get install gcc default-libmysqlclient-dev -y
 RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libmysqlclient-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config
 # install dependencies
 RUN pip install -U pip setuptools wheel
 RUN pip install --upgrade pip
