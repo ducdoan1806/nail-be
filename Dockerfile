@@ -3,6 +3,12 @@
 # Sử dụng Python base image
 FROM python:3.12-slim
 
+# Cài đặt các gói cần thiết để biên dịch mysqlclient
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config
+
 # Đặt thư mục làm việc
 WORKDIR /app
 
