@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: mysql://root:Assa1234!!@db:3306/nail
+      DATABASE_URL: mysql://ddoan:Assa1234!!@db:3306/nail
     depends_on:
       - db
 volumes:
