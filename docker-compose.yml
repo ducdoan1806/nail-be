@@ -15,7 +15,8 @@ services:
   backend:
     build: .
     container_name: nail-be
-    command: python manage.py runserver 0.0.0.0:8000
+    command:
+      ["./wait-for-it.sh", "db:3306", "--", "python", "manage.py", "migrate"]
     volumes:
       - .:/app
     ports:
