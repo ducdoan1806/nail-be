@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: unless-stopped
+    restart: always
     environment:
       - DB_PORT=3306
       - DB_HOST=db

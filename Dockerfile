@@ -20,4 +20,4 @@ COPY . .
 ENTRYPOINT ["sh", "-c"]
 
 # Use CMD to run migrations and then start the server
-CMD ["python manage.py migrate && gunicorn --bind 0.0.0.0:8000 nail-be.wsgi:application"]
+CMD ["python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
