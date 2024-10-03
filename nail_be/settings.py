@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-4n*p#7xyp*h8rar3c2)_eloe$xd%nulr822s0fc0!8k(7nf_cz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [config("DJANGO_ALLOWED_HOSTS").split(" ")]
 
 
 # Application definition
@@ -112,12 +112,12 @@ WSGI_APPLICATION = "nail_be.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
+        "ENGINE": config("SQL_ENGINE"),
+        "NAME": config("SQL_DATABASE"),
+        "USER": config("SQL_USER"),
+        "PASSWORD": config("SQL_PASSWORD"),
+        "HOST": config("SQL_HOST"),
+        "PORT": config("SQL_PORT"),
     }
 }
 MEDIA_URL = "/media/"

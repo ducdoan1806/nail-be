@@ -6,3 +6,4 @@
 `pip install -r requirements.txt`
 3. Hủy môi trường ảo  
 `deactivate`
+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
