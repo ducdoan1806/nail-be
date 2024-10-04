@@ -9,7 +9,7 @@ class Categories(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return str(self.id) + " - " + self.name
 
 
 class Products(models.Model):
@@ -21,7 +21,7 @@ class Products(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return str(self.id) + " - " + self.name
 
 
 class ProductDetail(models.Model):
@@ -34,7 +34,7 @@ class ProductDetail(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.color_name
+        return str(self.id) + " - " + self.color_name
 
 
 class ProductImage(models.Model):
@@ -60,7 +60,7 @@ class Orders(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return str(self.id) + " - " + self.name
 
 
 class Carts(models.Model):
