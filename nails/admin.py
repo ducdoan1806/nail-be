@@ -27,9 +27,17 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_display = ("id", "image", "created_at")
 
 
+class OrdersAdmin(admin.ModelAdmin):
+    list_display = ("name", "phone", "address", "note", "payment_method")
+
+
+class CartsAdmin(admin.ModelAdmin):
+    list_display = ("product_detail", "quantity", "price")
+
+
 admin.site.register(Categories, CategoriesAdmin)
 admin.site.register(Products, ProductsAdmin)
 admin.site.register(ProductDetail, ProductDetailAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
-admin.site.register(Orders)
-admin.site.register(Carts)
+admin.site.register(Orders, OrdersAdmin)
+admin.site.register(Carts, CartsAdmin)

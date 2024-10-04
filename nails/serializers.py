@@ -56,7 +56,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carts
-        fields = ["product_detail", "quantity"]
+        fields = ["product_detail", "quantity", "price"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -70,7 +70,6 @@ class OrderSerializer(serializers.ModelSerializer):
             "address",
             "note",
             "payment_method",
-            "total_payment",
             "carts",
         ]
 

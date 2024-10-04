@@ -54,7 +54,7 @@ class Orders(models.Model):
     phone = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     note = models.TextField(blank=True)
-    total_payment = models.IntegerField()
+
     payment_method = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -67,6 +67,7 @@ class Carts(models.Model):
     product_detail = models.ForeignKey(ProductDetail, on_delete=models.DO_NOTHING)
     order = models.ForeignKey(Orders, related_name="carts", on_delete=models.DO_NOTHING)
     quantity = models.IntegerField()
+    price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
