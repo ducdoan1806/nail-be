@@ -35,7 +35,6 @@ ALLOWED_HOSTS = config(
 # Application definition
 
 INSTALLED_APPS = [
-    "nails",
     "corsheaders",
     "rest_framework",
     "django_filters",
@@ -46,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "nails",
 ]
 
 MIDDLEWARE = [

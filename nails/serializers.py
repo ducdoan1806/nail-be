@@ -53,17 +53,32 @@ class ProductSerializer(serializers.ModelSerializer):
         return min_prc
 
 
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Carts
+        fields = ["product_detail", "quantity"]
+
+
 class OrderSerializer(serializers.ModelSerializer):
+    carts = CartSerializer(many=True)
 
     class Meta:
         model = Orders
-        fields = ["id", "name", "phone", "address", "note"]
+        fields = [
+            "name",
+            "phone",
+            "address",
+            "note",
+            "payment_method",
+            "total_payment",
+            "carts",
+        ]
 
+    def create(self, validated_data):
+        carts_data = validated_data.pop("carts")
+        order = Orders.objects.create(**validated_data)
 
-class CartSerializer(serializers.ModelSerializer):
-    product_detail = ProductDetailSerializer()
-    order = OrderSerializer()
+        for cart_data in carts_data:
+            Carts.objects.create(order=order, **cart_data)
 
-    class Meta:
-        model = Carts
-        fields = ["id", "order", "product_detail", "quantity"]
+        return order

@@ -258,3 +258,30 @@ class ProductDetailView(APIView):
                 {"status": False, "message": message},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class OrderView(APIView):
+    def post(self, request):
+        try:
+            serializer = OrderSerializer(data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Order created",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
+            return Response(
+                {"status": False, "message": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
