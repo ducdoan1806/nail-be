@@ -89,6 +89,9 @@ class Orders(models.Model):
         )
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"Order: {self.order_code}"
+
 
 class Carts(models.Model):
     product_detail = models.ForeignKey(ProductDetail, on_delete=models.DO_NOTHING)

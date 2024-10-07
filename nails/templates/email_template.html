@@ -1,0 +1,22 @@
+<!-- templates/email_templates/admin_order_notification.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Order Notification</title>
+  </head>
+  <body>
+    <h1>New Order Received</h1>
+    <p>A customer has placed a new order.</p>
+    <p>Order ID: {{ order.order_code }}</p>
+    <p>Customer Name: {{ order.name }}</p>
+    <p>Order details:</p>
+    <ul>
+      {% for item in order.items %}
+      <li>
+        {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }}
+      </li>
+      {% endfor %}
+    </ul>
+    <p>Total: {{ order.total }}</p>
+  </body>
+</html>

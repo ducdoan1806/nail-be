@@ -87,3 +87,9 @@ class OrderSerializer(serializers.ModelSerializer):
             Carts.objects.create(order=order, **cart_data)
 
         return order
+
+
+class EmailSerializer(serializers.Serializer):
+    subject = serializers.CharField(max_length=255)
+    message = serializers.CharField()
+    recipient = serializers.EmailField()

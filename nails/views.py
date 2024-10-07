@@ -6,6 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from . import *
 import logging
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
 
@@ -261,6 +264,29 @@ class ProductDetailView(APIView):
 
 
 class OrderView(APIView):
+    def notify_admin_about_order(self, order):
+        subject = "New Customer Order Notification"
+        admin_email = "ducdoan1806@gmail.com"  # Your email address
+        from_email = "ducdoan1806@gmail.com"
+
+        # Render the order details into the email template
+        html_content = render_to_string(
+            "email_template.html",
+            {
+                "order": order,
+            },
+        )
+
+        # Create the email with both plain text and HTML content
+        email = EmailMultiAlternatives(
+            subject,
+            "A customer has placed a new order.",  # Plain text version
+            from_email,
+            [admin_email],
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send(fail_silently=False)
+
     def post(self, request):
         try:
             cart = request.data.get("carts")
@@ -272,11 +298,17 @@ class OrderView(APIView):
             serializer = OrderSerializer(data=request.data)
 
             if serializer.is_valid():
-                serializer.save()
+                order = serializer.save()
+                try:
+                    self.notify_admin_about_order(order)
+                except Exception as email_error:
+                    # Log email sending error, but don't fail the response
+                    print(f"Email error: {str(email_error)}")
+
                 return Response(
                     {
                         "status": True,
-                        "message": "Order created",
+                        "message": "Order created and admin notified",
                         "data": serializer.data,
                     },
                     status=status.HTTP_201_CREATED,
@@ -314,3 +346,41 @@ class OrderDetailView(APIView):
                 {"status": False, "message": message},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class SendEmailTemplateAPI(APIView):
+    def post(self, request):
+        serializer = EmailSerializer(data=request.data)
+        if serializer.is_valid():
+            subject = serializer.validated_data["subject"]
+            message = serializer.validated_data["message"]
+            recipient = serializer.validated_data["recipient"]
+            try:
+                # Render the email template
+                html_content = render_to_string(
+                    "email_template.html", {"subject": subject, "message": message}
+                )
+
+                # Create the email with both plain text and HTML content
+                email = EmailMultiAlternatives(
+                    subject,
+                    message,  # Plain text content
+                    settings.DEFAULT_FROM_EMAIL,
+                    [recipient],
+                )
+                email.attach_alternative(
+                    html_content, "text/html"
+                )  # Attach HTML version
+
+                email.send(fail_silently=False)
+
+                return Response(
+                    {"success": "Email sent successfully!"}, status=status.HTTP_200_OK
+                )
+            except Exception as e:
+                message = error_message(e)
+                return Response(
+                    {"error": message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

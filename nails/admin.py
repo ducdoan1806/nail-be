@@ -28,7 +28,18 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 
 class OrdersAdmin(admin.ModelAdmin):
-    list_display = ("name", "phone", "address", "note", "payment_method")
+    list_display = (
+        "name",
+        "phone",
+        "address",
+        "note",
+        "payment_method",
+        "city_code",
+        "district_code",
+        "ward_code",
+        "serial_number",
+        "order_code",
+    )
 
 
 class CartsAdmin(admin.ModelAdmin):
