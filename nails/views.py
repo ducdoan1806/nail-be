@@ -263,6 +263,12 @@ class ProductDetailView(APIView):
 class OrderView(APIView):
     def post(self, request):
         try:
+            cart = request.data.get("carts")
+            if len(cart) == 0:
+                return Response(
+                    {"status": False, "message": "Your cart is empty"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             serializer = OrderSerializer(data=request.data)
 
             if serializer.is_valid():
@@ -276,8 +282,31 @@ class OrderView(APIView):
                     status=status.HTTP_201_CREATED,
                 )
             return Response(
-                {"status": False, "message": serializer.errors},
+                {"status": False, "message": "serializer.errors"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class OrderDetailView(APIView):
+    def get(self, request, pk):
+        try:
+            queryset = Orders.objects.get(order_code=pk)
+            serializer = OrderSerializer(queryset)
+
+            return Response(
+                {"status": True, "message": "Success", "data": serializer.data},
+                status=status.HTTP_200_OK,
+            )
+        except Orders.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Order not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
             message = error_message(e)

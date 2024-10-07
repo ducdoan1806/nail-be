@@ -54,13 +54,40 @@ class Orders(models.Model):
     phone = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     note = models.TextField(blank=True)
-
     payment_method = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    city_code = models.CharField(max_length=10, null=True, blank=True)
+    district_code = models.CharField(max_length=10, null=True, blank=True)
+    ward_code = models.CharField(max_length=10, null=True, blank=True)
+    serial_number = models.IntegerField(default=0)
+    order_code = models.CharField(max_length=30, unique=True, blank=True)
 
-    def __str__(self):
-        return str(self.id) + " - " + self.name
+    def save(self, *args, **kwargs):
+        if self.serial_number == 0:  # Nếu serial_number chưa được đặt
+            last_order = (
+                Orders.objects.filter(
+                    city_code=self.city_code,
+                    district_code=self.district_code,
+                    ward_code=self.ward_code,
+                )
+                .order_by("serial_number")
+                .last()
+            )
+
+            if last_order:
+                self.serial_number = last_order.serial_number + 1
+            else:
+                self.serial_number = 1  # Bắt đầu từ 1 nếu không có đơn hàng nào
+
+        # Đảm bảo serial_number có 6 chữ số
+        self.serial_number = str(self.serial_number).zfill(4)
+
+        # Tạo order_code
+        self.order_code = (
+            f"{self.city_code}{self.district_code}{self.ward_code}{self.serial_number}"
+        )
+        super().save(*args, **kwargs)
 
 
 class Carts(models.Model):
