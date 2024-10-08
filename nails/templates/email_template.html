@@ -1,22 +1,195 @@
-<!-- templates/email_templates/admin_order_notification.html -->
+{% load custom_filters %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>New Order Notification</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Order Confirmation</title>
   </head>
-  <body>
-    <h1>New Order Received</h1>
-    <p>A customer has placed a new order.</p>
-    <p>Order ID: {{ order.order_code }}</p>
-    <p>Customer Name: {{ order.name }}</p>
-    <p>Order details:</p>
-    <ul>
-      {% for item in order.items %}
-      <li>
-        {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }}
-      </li>
-      {% endfor %}
-    </ul>
-    <p>Total: {{ order.total }}</p>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    "
+  >
+    <header
+      style="background-color: #f4f4f4; padding: 20px; text-align: center"
+    >
+      <h1 style="color: #444; margin: 0">New Order Received</h1>
+    </header>
+    <main style="padding: 20px">
+      <p style="font-size: 16px">
+        A new order has been placed. Here are the details:
+      </p>
+
+      <h2 style="color: #444">Order Information</h2>
+      <table
+        style="width: 100%; border-collapse: collapse; margin-bottom: 20px"
+      >
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            <strong>Order Code:</strong>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            #{{ order.order_code }}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            <strong>Customer Name:</strong>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            {{ order.name }}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            <strong>Phone:</strong>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            {{ order.phone }}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            <strong>Address:</strong>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            {{ order.address }}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            <strong>Payment Method:</strong>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            {{ order.payment_method|title }}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            <strong>Note:</strong>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            {{ order.note|default:"N/A" }}
+          </td>
+        </tr>
+      </table>
+
+      <h2 style="color: #444">Order Details</h2>
+      <table
+        style="width: 100%; border-collapse: collapse; margin-bottom: 20px"
+      >
+        <thead>
+          <tr style="background-color: #f4f4f4">
+            <th
+              style="
+                padding: 10px;
+                text-align: left;
+                border-bottom: 2px solid #ddd;
+              "
+            >
+              Product
+            </th>
+            <th
+              style="
+                padding: 10px;
+                text-align: right;
+                border-bottom: 2px solid #ddd;
+              "
+            >
+              Quantity
+            </th>
+            <th
+              style="
+                padding: 10px;
+                text-align: right;
+                border-bottom: 2px solid #ddd;
+              "
+            >
+              Price
+            </th>
+            <th
+              style="
+                padding: 10px;
+                text-align: right;
+                border-bottom: 2px solid #ddd;
+              "
+            >
+              Total
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cart in order.carts %}
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd">
+              {{ cart.products.name }} ({{cart.product_detail.color_name}})
+            </td>
+            <td
+              style="
+                padding: 10px;
+                text-align: right;
+                border-bottom: 1px solid #ddd;
+              "
+            >
+              {{ cart.quantity }}
+            </td>
+            <td
+              style="
+                padding: 10px;
+                text-align: right;
+                border-bottom: 1px solid #ddd;
+              "
+            >
+              {{ cart.price|currency_vnd }}
+            </td>
+            <td
+              style="
+                padding: 10px;
+                text-align: right;
+                border-bottom: 1px solid #ddd;
+              "
+            >
+              {{ cart.price|currency_vnd }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td
+              colspan="3"
+              style="padding: 10px; text-align: right; font-weight: bold"
+            >
+              Total:
+            </td>
+            <td style="padding: 10px; text-align: right; font-weight: bold">
+              {{ total_price|currency_vnd }}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <p style="font-size: 16px">
+        Please process this order as soon as possible. If you have any
+        questions, please contact the customer directly.
+      </p>
+    </main>
+    <footer
+      style="
+        background-color: #f4f4f4;
+        padding: 20px;
+        text-align: center;
+        font-size: 14px;
+      "
+    >
+      <p>&copy; 2024 {{store_name}}. All rights reserved.</p>
+    </footer>
   </body>
 </html>

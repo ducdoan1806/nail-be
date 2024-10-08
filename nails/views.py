@@ -9,6 +9,7 @@ import logging
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.shortcuts import render
 
 logger = logging.getLogger(__name__)
 
@@ -270,13 +271,20 @@ class OrderView(APIView):
         from_email = "ducdoan1806@gmail.com"
 
         # Render the order details into the email template
+        serializer = OrderSerializer(order)
+
+        total_price = sum(
+            cart["price"] * cart["quantity"] for cart in serializer.data["carts"]
+        )
+
         html_content = render_to_string(
             "email_template.html",
             {
-                "order": order,
+                "order": serializer.data,
+                "store_name": "Gạo Nails",
+                "total_price": total_price,
             },
         )
-
         # Create the email with both plain text and HTML content
         email = EmailMultiAlternatives(
             subject,
@@ -295,6 +303,7 @@ class OrderView(APIView):
                     {"status": False, "message": "Your cart is empty"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
             serializer = OrderSerializer(data=request.data)
 
             if serializer.is_valid():

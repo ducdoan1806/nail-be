@@ -55,17 +55,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     products = serializers.SerializerMethodField(read_only=True)
+    product_detail = ProductDetailSerializer()
 
     def get_products(self, data):
         try:
-            return (ProductSerializer(data.product_detail.product, many=False).data,)
+            return ProductSerializer(data.product_detail.product, many=False).data
         except Exception as e:
             print(f"{e}")
             return None
 
     class Meta:
         model = Carts
-        fields = ["products", "quantity", "price"]
+        fields = ["product_detail", "products", "quantity", "price"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -90,7 +91,6 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         carts_data = validated_data.pop("carts")
         order = Orders.objects.create(**validated_data)
-
         for cart_data in carts_data:
             Carts.objects.create(order=order, **cart_data)
 
