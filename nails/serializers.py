@@ -54,10 +54,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
+    products = serializers.SerializerMethodField(read_only=True)
+
+    def get_products(self, data):
+        try:
+            return (ProductSerializer(data.product_detail.product, many=False).data,)
+        except Exception as e:
+            print(f"{e}")
+            return None
 
     class Meta:
         model = Carts
-        fields = ["product_detail", "quantity", "price"]
+        fields = ["products", "quantity", "price"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
