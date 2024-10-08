@@ -323,7 +323,7 @@ class OrderView(APIView):
                     status=status.HTTP_201_CREATED,
                 )
             return Response(
-                {"status": False, "message": "serializer.errors"},
+                {"status": False, "message": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
