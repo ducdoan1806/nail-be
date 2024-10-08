@@ -50,6 +50,12 @@ class ProductImage(models.Model):
 
 
 class Orders(models.Model):
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("PROCESSING", "Processing"),
+        ("COMPLETED", "Completed"),
+        ("CANCELLED", "Cancelled"),
+    ]
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
@@ -62,6 +68,7 @@ class Orders(models.Model):
     ward_code = models.CharField(max_length=10, null=True, blank=True)
     serial_number = models.IntegerField(default=0)
     order_code = models.CharField(max_length=30, unique=True, blank=True)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="PENDING")
 
     def save(self, *args, **kwargs):
         if self.serial_number == 0:  # Nếu serial_number chưa được đặt

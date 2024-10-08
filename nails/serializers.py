@@ -55,6 +55,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     products = serializers.SerializerMethodField(read_only=True)
+    detail = serializers.SerializerMethodField(read_only=True)
 
     def get_products(self, data):
         try:
@@ -63,9 +64,12 @@ class CartSerializer(serializers.ModelSerializer):
             print(f"{e}")
             return None
 
+    def get_detail(self, data):
+        return ProductDetailSerializer(data.product_detail, many=False).data
+
     class Meta:
         model = Carts
-        fields = ["products", "quantity", "price"]
+        fields = ["product_detail", "detail", "products", "quantity", "price"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -84,6 +88,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "ward_code",
             "serial_number",
             "order_code",
+            "status",
             "carts",
         ]
 

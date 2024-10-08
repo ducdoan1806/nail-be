@@ -39,6 +39,7 @@ class OrdersAdmin(admin.ModelAdmin):
         "ward_code",
         "serial_number",
         "order_code",
+        "status",
     )
 
 
