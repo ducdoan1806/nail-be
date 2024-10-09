@@ -9,7 +9,7 @@ import logging
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.shortcuts import render
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -294,6 +294,40 @@ class OrderView(APIView):
         )
         email.attach_alternative(html_content, "text/html")
         email.send(fail_silently=False)
+
+    def get(self, request):
+        try:
+            page_size = int(request.query_params.get("page_size", 15))
+            status = request.query_params.get("status")
+
+            search_term = request.query_params.get("search")
+            queryset = Orders.objects.all().order_by("-id")
+
+            if status:
+                queryset = queryset.filter(status=status)
+            if search_term:  # Kiểm tra nếu có giá trị tìm kiếm
+                queryset = queryset.filter(
+                    Q(name__icontains=search_term)
+                    | Q(order_code__icontains=search_term)
+                )
+
+            paginator = StandardPagesPagination()
+            paginator.page_size = page_size
+            result_page = paginator.paginate_queryset(queryset, request)
+
+            serializer = OrderSerializer(result_page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        except Orders.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Product not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            return Response(
+                {"status": False, "message": error_message(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     def post(self, request):
         try:

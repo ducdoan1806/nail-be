@@ -89,6 +89,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "serial_number",
             "order_code",
             "status",
+            "created_at",
             "carts",
         ]
 
