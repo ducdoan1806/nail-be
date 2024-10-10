@@ -281,6 +281,7 @@ class OrderView(APIView):
             "email_template.html",
             {
                 "order": serializer.data,
+                "url": f"{FRONTEND_URL}/orders/{serializer.data['order_code']}",
                 "store_name": "Gạo Nails",
                 "total_price": total_price,
             },
@@ -427,3 +428,39 @@ class SendEmailTemplateAPI(APIView):
                 )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OverView(APIView):
+    def get(self, request):
+        try:
+            order_count = Orders.objects.count()
+            product_count = Products.objects.count()
+            order_completed = Orders.objects.filter(status="COMPLETED")
+            completed_order_count = order_completed.count()
+            total_revenue = 0
+            for order in order_completed:
+                for cart in order.carts.all():
+                    total_revenue += cart.price * cart.quantity
+            orders = Orders.objects.filter(status="PENDING").order_by("-id")[:10]
+            serializers = OrderSerializer(orders, many=True)
+            return Response(
+                {
+                    "status": True,
+                    "message": "Success",
+                    "data": {
+                        "order_count": order_count,
+                        "completed_order_count": completed_order_count,
+                        "total_revenue": total_revenue,
+                        "product_count": product_count,
+                        "recent_order": serializers.data,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

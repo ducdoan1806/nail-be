@@ -1,5 +1,7 @@
 import sys, os
 
+FRONTEND_URL = "http://localhost:5173"
+
 
 def error_message(e):
     exc_type, exc_obj, exc_tb = sys.exc_info()

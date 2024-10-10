@@ -1,5 +1,4 @@
-{% load custom_filters %}
-
+{% load custom_filters multiply %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -36,7 +35,7 @@
             <strong>Order Code:</strong>
           </td>
           <td style="padding: 10px; border-bottom: 1px solid #ddd">
-            #{{ order.order_code }}
+            <a target="_blank" href="{{ url }}"> #{{ order.order_code }}</a>
           </td>
         </tr>
         <tr>
@@ -156,7 +155,7 @@
                 border-bottom: 1px solid #ddd;
               "
             >
-              {{ cart.price|currency_vnd }}
+              {{ cart.price|multiply:cart.quantity|currency_vnd }}
             </td>
           </tr>
           {% endfor %}

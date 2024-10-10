@@ -25,4 +25,5 @@ urlpatterns = [
         SendEmailTemplateAPI.as_view(),
         name="send_email_template_api",
     ),
+    path("overview/", OverView.as_view(), name="overview"),
 ]
