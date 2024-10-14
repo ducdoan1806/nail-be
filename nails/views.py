@@ -391,6 +391,40 @@ class OrderDetailView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    def patch(self, request, pk):
+        try:
+            order = Orders.objects.get(id=pk)
+            new_status = request.data.get("status")
+
+            if new_status:
+                order.status = new_status
+                order.save()
+                serializer = OrderSerializer(order)
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Order status updated successfully.",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                return Response(
+                    {"status": True, "error": "Status is required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except Orders.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Order not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 class SendEmailTemplateAPI(APIView):
     def post(self, request):
