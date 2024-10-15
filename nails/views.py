@@ -426,44 +426,6 @@ class OrderDetailView(APIView):
             )
 
 
-class SendEmailTemplateAPI(APIView):
-    def post(self, request):
-        serializer = EmailSerializer(data=request.data)
-        if serializer.is_valid():
-            subject = serializer.validated_data["subject"]
-            message = serializer.validated_data["message"]
-            recipient = serializer.validated_data["recipient"]
-            try:
-                # Render the email template
-                html_content = render_to_string(
-                    "email_template.html", {"subject": subject, "message": message}
-                )
-
-                # Create the email with both plain text and HTML content
-                email = EmailMultiAlternatives(
-                    subject,
-                    message,  # Plain text content
-                    settings.DEFAULT_FROM_EMAIL,
-                    [recipient],
-                )
-                email.attach_alternative(
-                    html_content, "text/html"
-                )  # Attach HTML version
-
-                email.send(fail_silently=False)
-
-                return Response(
-                    {"success": "Email sent successfully!"}, status=status.HTTP_200_OK
-                )
-            except Exception as e:
-                message = error_message(e)
-                return Response(
-                    {"error": message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class OverView(APIView):
     def get(self, request):
         try:
