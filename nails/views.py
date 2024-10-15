@@ -156,7 +156,7 @@ class ProductView(APIView):
                 serializer = ProductSerializer(queryset)
                 return Response(
                     {"status": True, "message": "Sucess", "data": serializer.data},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    status=status.HTTP_200_OK,
                 )
 
             queryset = Products.objects.all().order_by("id")
