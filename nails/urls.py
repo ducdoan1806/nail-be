@@ -3,6 +3,9 @@ from .views import *
 
 
 urlpatterns = [
+    path("register/", RegisterView.as_view(), name="register"),
+    path("oauth2-info/", AuthInfo.as_view()),
+    path("user/", UserView.as_view(), name="user"),
     path("categories/", CategoryView.as_view(), name="category-list"),
     path("categories/<int:pk>/", CategoryView.as_view(), name="category-detail"),
     path(

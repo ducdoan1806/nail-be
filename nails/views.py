@@ -1,6 +1,7 @@
 from .models import *
 from .serializers import *
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,6 +13,74 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 
 logger = logging.getLogger(__name__)
+
+
+class AuthInfo(APIView):
+    def get(self, request):
+        return Response(settings.OAUTH2_INFO, status=status.HTTP_200_OK)
+
+
+class RegisterView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = RegisterSerializer(data=request.data)
+            if serializer.is_valid():
+                user = User.objects.create_user(
+                    username=serializer.data["username"],
+                    email=serializer.data["email"],
+                    first_name=serializer.data["first_name"],
+                    last_name=serializer.data["last_name"],
+                    password=serializer.data["password"],
+                )
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Registration successfully",
+                        "data": UserSerializer(user, many=False).data,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
+            errors = []
+            fields_with_errors = []
+
+            for field, field_errors in serializer.errors.items():
+                fields_with_errors.append(field)
+                errors.extend([str(error) for error in field_errors])
+
+            return Response(
+                {
+                    "status": False,
+                    "message": " ".join(errors),
+                    "fields": fields_with_errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class UserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user = request.user
+            serializer = UserSerializer(user)
+            data = serializer.data
+            return Response(
+                {"status": True, "message": "Success", "data": data},
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class StandardPagesPagination(PageNumberPagination):

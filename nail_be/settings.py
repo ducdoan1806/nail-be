@@ -184,8 +184,8 @@ OAUTH2_PROVIDER = {
     "OAUTH2_BACKEND_CLASS": "oauth2_provider.oauth2_backends.JSONOAuthLibCore",
 }
 OAUTH2_INFO = {
-    "client_id": "8Bw7rPpgfgVrGroAWXkN8WC7wm9V7Pi0CHqmfNx5",
-    "client_secret": "NtftTjhzK9aaJO50v0sCTVRdVxgt0ziEYJfoWgWYSE4ezXAgC6kd82OHu2Y78ZWIdYGrvNi92IkJODYEXuiC9ZaoRk6VkKBCuK3aC38pSz8YDFupCt0HWeTQBtDlzQA5",
+    "client_id": "6LEtFNLwpjRvQSCsyJ2V8jL8E9vgOI9YykyIjR84",
+    "client_secret": "iAQ3nHW1tSxJOVYkChPTmpAj1IGdDcVSCzvvrncVRK3TIPJYCos3qPn1KLDZeFqzjtlZhpJ4PqM0XRmzWpsQ41zHaSrEiCQf5jEljYuUjXlS2GerwdPHcJei11NtVhZu",
 }
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
