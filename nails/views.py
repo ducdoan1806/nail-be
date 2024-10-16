@@ -529,3 +529,56 @@ class OverView(APIView):
                 {"status": False, "message": message},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class AddressView(APIView):
+    def get(self, request):
+        try:
+            city_id = request.query_params.get("city", None)
+            district_id = request.query_params.get("district", None)
+            if city_id:
+                city = City.objects.get(id=city_id)
+                district = District.objects.filter(city=city)
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Success",
+                        "data": DistrictSerializer(district, many=True).data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            if district_id:
+                district = District.objects.get(id=district_id)
+                ward = Ward.objects.filter(district=district)
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Success",
+                        "data": WardSerializer(ward, many=True).data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            city = City.objects.all()
+            return Response(
+                {
+                    "status": True,
+                    "message": "Success",
+                    "data": CitySerializer(city, many=True).data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except City.DoesNotExist:
+            return Response(
+                {"status": False, "message": "City not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except District.DoesNotExist:
+            return Response(
+                {"status": False, "message": "District not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            return Response(
+                {"status": False, "message": error_message(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

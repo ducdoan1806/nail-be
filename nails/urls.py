@@ -24,4 +24,5 @@ urlpatterns = [
     path("order/", OrderView.as_view(), name="order"),
     path("order/<int:pk>/", OrderDetailView.as_view(), name="order-detail"),
     path("overview/", OverView.as_view(), name="overview"),
+    path("address/", AddressView.as_view(), name="address"),
 ]
