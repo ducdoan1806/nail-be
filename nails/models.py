@@ -1,7 +1,25 @@
 from django.db import models
 
 
-# Create your models here.
+class City(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.IntegerField(unique=True)
+
+
+class District(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.IntegerField(unique=True)
+    city = models.ForeignKey(City, related_name="districts", on_delete=models.CASCADE)
+
+
+class Ward(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.IntegerField(unique=True)
+    district = models.ForeignKey(
+        District, related_name="wards", on_delete=models.CASCADE
+    )
+
+
 class Categories(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=20, unique=True)
