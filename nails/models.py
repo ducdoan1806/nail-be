@@ -26,17 +26,23 @@ class Categories(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ["-id"]
+
     def __str__(self):
         return str(self.id) + " - " + self.name
 
 
 class Products(models.Model):
-    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
+    category = models.ForeignKey(Categories, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=255)
     detail = models.TextField(blank=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-id"]
 
     def __str__(self):
         return str(self.id) + " - " + self.name
@@ -88,6 +94,9 @@ class Orders(models.Model):
     order_code = models.CharField(max_length=30, unique=True, blank=True)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="PENDING")
 
+    class Meta:
+        ordering = ["-id"]
+
     def save(self, *args, **kwargs):
         if self.serial_number == 0:  # Nếu serial_number chưa được đặt
             last_order = (
@@ -125,6 +134,9 @@ class Carts(models.Model):
     price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-id"]
 
     def __str__(self):
         return f"Cart: {self.product_detail} (Quantity: {self.quantity})"

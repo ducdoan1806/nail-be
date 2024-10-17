@@ -90,7 +90,6 @@ class StandardPagesPagination(PageNumberPagination):
 class CategoryView(APIView):
     def get(self, request):
         try:
-
             page_size = request.query_params.get("page_size")
             queryset = Categories.objects.all().order_by("id")
 
@@ -126,6 +125,61 @@ class CategoryView(APIView):
             {"status": False, "message": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+    def put(self, request, pk):
+        try:
+            category = Categories.objects.get(pk=pk)
+            serializer = CategorySerializer(category, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Successfully",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {"status": False, "message": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Categories.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Category not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def delete(self, request, pk):
+        try:
+            category = Categories.objects.get(pk=pk)
+            data = CategorySerializer(category).data
+            category.delete()
+            return Response(
+                {
+                    "status": True,
+                    "message": "Category deleted successfully.",
+                    "data": data,
+                },
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        except Categories.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Category not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class ProductImageUploadView(APIView):
@@ -218,7 +272,11 @@ class ProductView(APIView):
     def get(self, request):
         try:
             page_size = request.query_params.get("page_size")
-            product_id = request.query_params.get("product_id")
+            product_id = request.query_params.get("product_id", None)
+            search = request.query_params.get("search", None)
+            queryset = Products.objects.all()
+            if search:  # Kiểm tra nếu có giá trị tìm kiếm
+                queryset = queryset.filter(Q(name__icontains=search))
 
             if product_id is not None:
                 queryset = Products.objects.filter(id=product_id).order_by("id").first()
@@ -228,7 +286,6 @@ class ProductView(APIView):
                     status=status.HTTP_200_OK,
                 )
 
-            queryset = Products.objects.all().order_by("id")
             paginator = StandardPagesPagination()
             paginator.page_size = int(page_size) if page_size is not None else 15
 
@@ -534,10 +591,10 @@ class OverView(APIView):
 class AddressView(APIView):
     def get(self, request):
         try:
-            city_id = request.query_params.get("city", None)
-            district_id = request.query_params.get("district", None)
-            if city_id:
-                city = City.objects.get(id=city_id)
+            city_code = request.query_params.get("city", None)
+            district_code = request.query_params.get("district", None)
+            if city_code:
+                city = City.objects.get(code=city_code)
                 district = District.objects.filter(city=city)
                 return Response(
                     {
@@ -547,8 +604,8 @@ class AddressView(APIView):
                     },
                     status=status.HTTP_200_OK,
                 )
-            if district_id:
-                district = District.objects.get(id=district_id)
+            if district_code:
+                district = District.objects.get(code=district_code)
                 ward = Ward.objects.filter(district=district)
                 return Response(
                     {
