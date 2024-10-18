@@ -91,7 +91,7 @@ class CategoryView(APIView):
     def get(self, request):
         try:
             page_size = request.query_params.get("page_size")
-            queryset = Categories.objects.all().order_by("id")
+            queryset = Categories.objects.all()
 
             paginator = StandardPagesPagination()
             paginator.page_size = int(page_size) if page_size is not None else 15
