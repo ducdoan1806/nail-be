@@ -196,7 +196,7 @@ class CategoryView(APIView):
                     "message": "Category is deleted.",
                     "data": data,
                 },
-                status=status.HTTP_204_NO_CONTENT,
+                status=status.HTTP_200_OK,
             )
         except Categories.DoesNotExist:
             return Response(
@@ -447,7 +447,36 @@ class ProductDetailView(APIView):
                 },
                 status=status.HTTP_201_CREATED,
             )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
+    def delete(self, request, pk):
+        try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+            product_variant = ProductDetail.objects.get(pk=pk)
+            data = ProductDetailSerializer(product_variant).data
+            product_variant.delete()
+            return Response(
+                {
+                    "status": True,
+                    "message": "Product variant is deleted.",
+                    "data": data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except ProductDetail.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Product variant not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
             message = error_message(e)
             return Response(
