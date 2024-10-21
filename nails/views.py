@@ -11,6 +11,8 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.db.models import Q
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 logger = logging.getLogger(__name__)
 
@@ -88,8 +90,12 @@ class StandardPagesPagination(PageNumberPagination):
 
 
 class CategoryView(APIView):
+    authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
+    permission_classes = [AllowAny]  # Đảm bảo người dùng phải đăng nhập (token hợp lệ)
+
     def get(self, request):
         try:
+
             page_size = request.query_params.get("page_size")
             queryset = Categories.objects.all()
 
@@ -109,25 +115,43 @@ class CategoryView(APIView):
             )
 
     def post(self, request):
-        logger.info("Creating a new category")
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+        try:
+            logger.info("Creating a new category")
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+
+            serializer = CategorySerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Category created",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
             return Response(
-                {
-                    "status": True,
-                    "message": "Category created",
-                    "data": serializer.data,
-                },
-                status=status.HTTP_201_CREATED,
+                {"status": False, "message": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        return Response(
-            {"status": False, "message": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     def put(self, request, pk):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             category = Categories.objects.get(pk=pk)
             serializer = CategorySerializer(category, data=request.data)
             if serializer.is_valid():
@@ -158,6 +182,11 @@ class CategoryView(APIView):
 
     def delete(self, request, pk):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             category = Categories.objects.get(pk=pk)
             data = CategorySerializer(category).data
             category.delete()
@@ -183,6 +212,9 @@ class CategoryView(APIView):
 
 
 class ProductImageUploadView(APIView):
+    authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
+    permission_classes = [AllowAny]  # Đảm bảo người dùng phải đăng nhập (token hợp lệ)
+
     def get(self, request):
         try:
             page_size = request.query_params.get("page_size")
@@ -210,6 +242,11 @@ class ProductImageUploadView(APIView):
 
     def post(self, request, pk):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             product = Products.objects.get(id=pk)
             images = request.FILES.getlist("images")
             uploaded_image_urls = []
@@ -237,6 +274,11 @@ class ProductImageUploadView(APIView):
 
     def delete(self, request, pk=None):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             image = ProductImage.objects.get(pk=pk)
             image_data = ProductImageSerializer(image).data
 
@@ -269,6 +311,9 @@ class ProductImageUploadView(APIView):
 
 
 class ProductView(APIView):
+    authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
+    permission_classes = [AllowAny]  # Đảm bảo người dùng phải đăng nhập (token hợp lệ)
+
     def get(self, request):
         try:
             page_size = request.query_params.get("page_size")
@@ -307,6 +352,11 @@ class ProductView(APIView):
 
     def post(self, request):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             name = request.data.get("name")
             category_id = request.data.get("category")
             detail = request.data.get("detail")
@@ -333,6 +383,9 @@ class ProductView(APIView):
 
 
 class ProductDetailView(APIView):
+    authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
+    permission_classes = [AllowAny]  # Đảm bảo người dùng phải đăng nhập (token hợp lệ)
+
     def get(self, request):
         try:
             page_size = request.query_params.get("page_size")
@@ -360,6 +413,11 @@ class ProductDetailView(APIView):
 
     def post(self, request):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             product = request.data.get("product")
             price = request.data.get("price")
             color_code = request.data.get("color_code")
@@ -391,6 +449,9 @@ class ProductDetailView(APIView):
 
 
 class OrderView(APIView):
+    authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
+    permission_classes = [AllowAny]  # Đảm bảo người dùng phải đăng nhập (token hợp lệ)
+
     def notify_admin_about_order(self, order):
         subject = "New Customer Order Notification"
         admin_email = "ducdoan1806@gmail.com"  # Your email address
@@ -424,6 +485,11 @@ class OrderView(APIView):
 
     def get(self, request):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             page_size = int(request.query_params.get("page_size", 15))
             status = request.query_params.get("status")
 
@@ -496,6 +562,9 @@ class OrderView(APIView):
 
 
 class OrderDetailView(APIView):
+    authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
+    permission_classes = [AllowAny]  # Đảm bảo người dùng phải đăng nhập (token hợp lệ)
+
     def get(self, request, pk):
         try:
             queryset = Orders.objects.get(order_code=pk)
@@ -519,6 +588,11 @@ class OrderDetailView(APIView):
 
     def patch(self, request, pk):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             order = Orders.objects.get(id=pk)
             new_status = request.data.get("status")
 
@@ -553,8 +627,16 @@ class OrderDetailView(APIView):
 
 
 class OverView(APIView):
+    authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
+    permission_classes = [AllowAny]  # Đảm bảo người dùng phải đăng nhập (token hợp lệ)
+
     def get(self, request):
         try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             order_count = Orders.objects.count()
             product_count = Products.objects.count()
             order_completed = Orders.objects.filter(status="COMPLETED")
