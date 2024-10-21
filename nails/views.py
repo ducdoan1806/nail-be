@@ -129,7 +129,7 @@ class CategoryView(APIView):
                 return Response(
                     {
                         "status": True,
-                        "message": "Category created",
+                        "message": "Category is created",
                         "data": serializer.data,
                     },
                     status=status.HTTP_201_CREATED,
@@ -159,7 +159,7 @@ class CategoryView(APIView):
                 return Response(
                     {
                         "status": True,
-                        "message": "Successfully",
+                        "message": "Category is updated",
                         "data": serializer.data,
                     },
                     status=status.HTTP_200_OK,
@@ -193,7 +193,7 @@ class CategoryView(APIView):
             return Response(
                 {
                     "status": True,
-                    "message": "Category deleted successfully.",
+                    "message": "Category is deleted.",
                     "data": data,
                 },
                 status=status.HTTP_204_NO_CONTENT,
@@ -256,7 +256,7 @@ class ProductImageUploadView(APIView):
             return Response(
                 {
                     "status": True,
-                    "message": "Success",
+                    "message": "Image is uploaded",
                     "data": {"product_id": product.id, "images": uploaded_image_urls},
                 },
                 status=status.HTTP_201_CREATED,
@@ -370,7 +370,11 @@ class ProductView(APIView):
             serializer = ProductSerializer(product)
 
             return Response(
-                {"status": True, "message": "Success", "data": serializer.data},
+                {
+                    "status": True,
+                    "message": "Product is created",
+                    "data": serializer.data,
+                },
                 status=status.HTTP_201_CREATED,
             )
 
@@ -436,7 +440,11 @@ class ProductDetailView(APIView):
             serializer = ProductDetailSerializer(product_detail)
 
             return Response(
-                {"status": True, "message": "Success", "data": serializer.data},
+                {
+                    "status": True,
+                    "message": "Product detail is created",
+                    "data": serializer.data,
+                },
                 status=status.HTTP_201_CREATED,
             )
 
@@ -491,13 +499,12 @@ class OrderView(APIView):
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
             page_size = int(request.query_params.get("page_size", 15))
-            status = request.query_params.get("status")
-
+            status_order = request.query_params.get("status")
             search_term = request.query_params.get("search")
             queryset = Orders.objects.all().order_by("-id")
 
-            if status:
-                queryset = queryset.filter(status=status)
+            if status_order:
+                queryset = queryset.filter(status=status_order)
             if search_term:  # Kiểm tra nếu có giá trị tìm kiếm
                 queryset = queryset.filter(
                     Q(name__icontains=search_term)
