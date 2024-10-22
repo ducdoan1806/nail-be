@@ -1,2 +1,5 @@
 mysql/
 django.log
+venv
+__pycache__/
+media
