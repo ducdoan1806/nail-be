@@ -66,7 +66,7 @@ class ProductDetail(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(
-        Products, related_name="images", on_delete=models.DO_NOTHING
+        Products, related_name="images", on_delete=models.CASCADE
     )
     image = models.ImageField(upload_to="uploads/images/")
     created_at = models.DateTimeField(auto_now_add=True)
