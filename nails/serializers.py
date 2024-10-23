@@ -69,7 +69,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
+    category = serializers.PrimaryKeyRelatedField(queryset=Categories.objects.all())
+    category_item = serializers.SerializerMethodField(read_only=True)
     mini_price = serializers.SerializerMethodField()
     images = ProductImageSerializer(many=True, read_only=True)
     detail_products = serializers.SerializerMethodField()
@@ -85,7 +86,13 @@ class ProductSerializer(serializers.ModelSerializer):
             "category",
             "images",
             "detail_products",
+            "category_item",
         ]
+
+    def get_category_item(self, product):
+
+        category = Categories.objects.get(id=product.category.id)
+        return CategorySerializer(category).data
 
     def get_detail_products(self, product_id):
         product_detail = ProductDetail.objects.filter(product_id=product_id)

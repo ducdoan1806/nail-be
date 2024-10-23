@@ -19,7 +19,7 @@ urlpatterns = [
         name="image-upload",
     ),
     path("products/", ProductView.as_view(), name="products-list"),
-    # path("products/<int:pk>/", ProductView.as_view(), name="products-detail"),
+    path("products/<int:pk>/", ProductView.as_view(), name="product"),
     path("product-detail/", ProductDetailView.as_view(), name="product-detail"),
     path(
         "product-detail/<int:pk>/", ProductDetailView.as_view(), name="products-detail"

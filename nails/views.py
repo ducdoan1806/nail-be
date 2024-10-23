@@ -240,19 +240,26 @@ class ProductImageUploadView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    def post(self, request, pk):
+    def post(self, request):
         try:
             if not request.user.is_authenticated:
                 return Response(
                     {"status": False, "message": "Unauthorized"},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
-            product = Products.objects.get(id=pk)
+            product_id = request.data.get("product_id")
+            product = Products.objects.get(id=product_id)
             images = request.FILES.getlist("images")
             uploaded_image_urls = []
             for image in images:
                 img_instance = ProductImage.objects.create(product=product, image=image)
-                uploaded_image_urls.append(img_instance.image.url)
+                uploaded_image_urls.append(
+                    {
+                        "id": img_instance.id,
+                        "image": img_instance.image.url,
+                        "created_at": img_instance.created_at,
+                    }
+                )
             return Response(
                 {
                     "status": True,
@@ -291,10 +298,10 @@ class ProductImageUploadView(APIView):
             return Response(
                 {
                     "status": True,
-                    "message": "Image deleted",
+                    "message": "Image is deleted",
                     "data": image_data,
                 },
-                status=status.HTTP_204_NO_CONTENT,
+                status=status.HTTP_200_OK,
             )
         except ProductImage.DoesNotExist:
             return Response(
@@ -385,6 +392,80 @@ class ProductView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    def put(self, request, pk):
+        try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+            product = Products.objects.get(id=pk)
+            category_id = request.data.get("category")
+            category = Categories.objects.get(id=category_id)
+            request.data["category"] = category.id
+
+            serializer = ProductSerializer(product, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Product updated successfully.",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {"status": False, "message": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Products.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Product not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Categories.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Category not found."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def delete(self, request, pk):
+        try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+            product = Products.objects.get(pk=pk)
+            data = ProductSerializer(product).data
+            product.delete()
+            return Response(
+                {
+                    "status": True,
+                    "message": "Product is deleted.",
+                    "data": data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Products.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Product not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 class ProductDetailView(APIView):
     authentication_classes = [OAuth2Authentication]  # Kiểm tra xác thực OAuth2
@@ -446,6 +527,41 @@ class ProductDetailView(APIView):
                     "data": serializer.data,
                 },
                 status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def put(self, request, pk):
+        try:
+            if not request.user.is_authenticated:
+                return Response(
+                    {"status": False, "message": "Unauthorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+            product_detail = ProductDetail.objects.get(id=pk)
+            serializer = ProductDetailSerializer(product_detail, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Product variant is updated",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {"status": False, "message": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except ProductDetail.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Product variant not found."},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
             message = error_message(e)
