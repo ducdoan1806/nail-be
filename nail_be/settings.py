@@ -62,6 +62,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
+    "http://localhost:8081",
+    "http://10.103.126.88:8081",
     # Frontend URL if applicable
 ]
 LOGGING = {
