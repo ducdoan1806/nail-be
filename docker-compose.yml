@@ -46,6 +46,7 @@ services:
     entrypoint: >
       sh -c "python manage.py migrate &&
              python manage.py createsuperuser --no-input || true &&
+             python manage.py import_city_data &&
              python manage.py runserver 0.0.0.0:8000"
 
   nextjs:
@@ -53,8 +54,8 @@ services:
     build:
       context: ../nail-fe # Đường dẫn đến thư mục chứa Next.js
       dockerfile: Dockerfile # Dockerfile của Next.js
-    environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    env_file:
+      - ../.env
     volumes:
       - ../nail-fe:/usr/src/app
     ports:
