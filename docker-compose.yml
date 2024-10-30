@@ -55,7 +55,7 @@ services:
       context: ../nail-fe # Đường dẫn đến thư mục chứa Next.js
       dockerfile: Dockerfile # Dockerfile của Next.js
     env_file:
-      - ../.env
+      - ../nail-be/.env
     volumes:
       - ../nail-fe:/usr/src/app
     ports:
