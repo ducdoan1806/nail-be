@@ -73,7 +73,7 @@ services:
     volumes:
       - ../nail-admin:/usr/src/app
     ports:
-      - 3001:3000
+      - 3001:3001
     depends_on:
       - backend # Phụ thuộc vào Django
     networks:
