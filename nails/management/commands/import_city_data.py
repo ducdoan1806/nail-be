@@ -20,30 +20,38 @@ class Command(BaseCommand):
 
         # Duyệt qua các tỉnh/thành phố
         for city_data in data:
+            # Kiểm tra xem thành phố đã tồn tại chưa
             city, created = City.objects.get_or_create(
                 name=city_data["name"],
-                code=city_code_counter,  # Tạo mã duy nhất cho mỗi City
+                defaults={"code": city_code_counter},  # Tạo mã duy nhất cho mỗi City
             )
-            city_code_counter += 1  # Tăng giá trị code lên sau mỗi lần tạo city
+            if created:  # Chỉ tăng code nếu thành phố mới được tạo
+                city_code_counter += 1
 
             # Duyệt qua các huyện/quận
             for district_data in city_data["districts"]:
+                # Kiểm tra xem huyện/quận đã tồn tại chưa
                 district, created = District.objects.get_or_create(
                     name=district_data["name"],
-                    code=district_code_counter,  # Tạo mã duy nhất cho mỗi District
-                    city=city,
+                    defaults={
+                        "code": district_code_counter,
+                        "city": city,
+                    },  # Tạo mã duy nhất cho mỗi District
                 )
-                district_code_counter += (
-                    1  # Tăng giá trị code lên sau mỗi lần tạo district
-                )
+                if created:  # Chỉ tăng code nếu huyện/quận mới được tạo
+                    district_code_counter += 1
 
                 # Duyệt qua các phường/xã
                 for ward_data in district_data["wards"]:
-                    Ward.objects.get_or_create(
+                    # Kiểm tra xem phường/xã đã tồn tại chưa
+                    ward, created = Ward.objects.get_or_create(
                         name=ward_data["name"],
-                        code=ward_code_counter,  # Tạo mã duy nhất cho mỗi Ward
-                        district=district,
+                        defaults={
+                            "code": ward_code_counter,
+                            "district": district,
+                        },  # Tạo mã duy nhất cho mỗi Ward
                     )
-                    ward_code_counter += 1  # Tăng giá trị code lên sau mỗi lần tạo ward
+                    if created:  # Chỉ tăng code nếu phường/xã mới được tạo
+                        ward_code_counter += 1
 
         self.stdout.write(self.style.SUCCESS("Successfully imported city data"))

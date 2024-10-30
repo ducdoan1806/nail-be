@@ -47,9 +47,24 @@ class CartsAdmin(admin.ModelAdmin):
     list_display = ("product_detail", "quantity", "price")
 
 
+class CitysAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "code")
+
+
+class DistrictsAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "code", "city")
+
+
+class WardsAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "code", "district")
+
+
 admin.site.register(Categories, CategoriesAdmin)
 admin.site.register(Products, ProductsAdmin)
 admin.site.register(ProductDetail, ProductDetailAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(Orders, OrdersAdmin)
 admin.site.register(Carts, CartsAdmin)
+admin.site.register(City, CitysAdmin)
+admin.site.register(District, DistrictsAdmin)
+admin.site.register(Ward, WardsAdmin)
