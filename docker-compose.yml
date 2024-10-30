@@ -18,10 +18,10 @@ services:
     networks:
       - app-network
 
-  web:
+  backend:
     container_name: django-web
     build:
-      context: ./  # Đường dẫn đến thư mục backend
+      context: ./ # Đường dẫn đến thư mục backend
       dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -38,8 +38,8 @@ services:
   nextjs:
     container_name: nextjs-web
     build:
-      context: ../nail-fe  # Đường dẫn đến thư mục chứa Next.js
-      dockerfile: Dockerfile  # Dockerfile của Next.js
+      context: ../nail-fe # Đường dẫn đến thư mục chứa Next.js
+      dockerfile: Dockerfile # Dockerfile của Next.js
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     volumes:
@@ -47,25 +47,30 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - web  # Phụ thuộc vào Django
+      - backend # Phụ thuộc vào Django
     networks:
       - app-network
 
-
+  admin:
+    build:
+      context: ../nail-admin
+      dockerfile: Dockerfile
+    restart: always
+    expose:
+      - "3000"
   nginx:
     container_name: nginx-server
     image: nginx:latest
     ports:
-      - 80:80  # Expose Nginx trên cổng 80
+      - 80:80 # Expose Nginx trên cổng 80
     volumes:
-      - ../nail-fe/nginx.conf:/etc/nginx/nginx.conf  # Gắn cấu hình Nginx vào container
+      - ./default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - nextjs
+      - admin
+      - backend
     networks:
       - app-network
 
-networks:
-  app-network:
-    driver: bridge
 volumes:
   mysql-data:
