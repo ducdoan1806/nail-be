@@ -69,8 +69,15 @@ services:
       context: ../nail-admin
       dockerfile: Dockerfile
     restart: always
-    expose:
-      - "3000"
+    volumes:
+      - ../nail-admin:/usr/src/app
+    ports:
+      - 3001:3000
+    depends_on:
+      - backend # Phụ thuộc vào Django
+    networks:
+      - app-network
+
   nginx:
     container_name: nginx-server
     image: nginx:latest
