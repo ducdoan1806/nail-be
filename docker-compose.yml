@@ -22,7 +22,7 @@ services:
       - 3306:3306
     networks:
       - app-network
-    
+
   backend:
     container_name: django-web
     build:
@@ -31,7 +31,7 @@ services:
     command: >
       sh -c "python manage.py makemigrations &&
              python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000" 
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/usr/src/app/
     env_file:
@@ -70,6 +70,10 @@ services:
       context: ../nail-admin
       dockerfile: Dockerfile
     restart: always
+    environment:
+      - PORT=3001
+    expose:
+      - "3001"
     volumes:
       - ../nail-admin:/usr/src/app
     ports:
