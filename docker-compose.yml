@@ -23,8 +23,9 @@ services:
     networks:
       - app-network
 
-  backend:
+  django-web:
     container_name: django-web
+    image: django-image
     build:
       context: ./ # Đường dẫn đến thư mục backend
       dockerfile: Dockerfile
@@ -49,7 +50,8 @@ services:
              python manage.py import_city_data &&
              python manage.py runserver 0.0.0.0:8000"
 
-  nextjs:
+  nextjs-web:
+    image: nextjs-image
     container_name: nextjs-web
     build:
       context: ../nail-fe # Đường dẫn đến thư mục chứa Next.js
@@ -61,7 +63,7 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - backend # Phụ thuộc vào Django
+      - django-web # Phụ thuộc vào Django
     networks:
       - app-network
 
@@ -75,7 +77,7 @@ services:
     ports:
       - 3001:3001
     depends_on:
-      - backend # Phụ thuộc vào Django
+      - django-web # Phụ thuộc vào Django
     networks:
       - app-network
 
@@ -89,7 +91,7 @@ services:
     depends_on:
       - nextjs
       - admin
-      - backend
+      - django-web
     networks:
       - app-network
 
