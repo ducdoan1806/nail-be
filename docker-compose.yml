@@ -97,3 +97,4 @@ volumes:
   mysql-data:
 networks:
   app-network:
+    driver: bridge
