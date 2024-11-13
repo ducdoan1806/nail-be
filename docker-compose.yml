@@ -70,10 +70,6 @@ services:
       context: ../nail-admin
       dockerfile: Dockerfile
     restart: always
-    environment:
-      - PORT=3001
-    expose:
-      - "3001"
     volumes:
       - ../nail-admin:/usr/src/app
     ports:
