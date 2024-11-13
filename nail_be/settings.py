@@ -61,11 +61,13 @@ MIDDLEWARE = [
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://localhost:5173",
     "http://localhost:8081",
     "http://10.103.126.88:8081",
     "http://nextjs:3000",
     "http://admin:3001",
+    "http://localhost:80",
     "http://localhost",
     # Frontend URL if applicable
 ]
