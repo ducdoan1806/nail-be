@@ -3,6 +3,20 @@ from django.contrib.auth.models import User
 from .models import *
 
 
+class HeroSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Hero
+        fields = "__all__"
+
+
+class ContactSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Contact
+        fields = "__all__"
+
+
 class CitySerializer(serializers.ModelSerializer):
 
     class Meta:

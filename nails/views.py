@@ -873,3 +873,179 @@ class AddressView(APIView):
                 {"status": False, "message": error_message(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class HeroAPIView(APIView):
+
+    # GET all heroes
+    def get(self, request):
+        try:
+            heroes = Hero.objects.all()
+            serializer = HeroSerializer(heroes, many=True)
+            return Response(
+                {
+                    "status": True,
+                    "message": "Successful",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    # POST a new hero
+    def post(self, request):
+        try:
+            serializer = HeroSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "status": False,
+                        "message": "Hero is created",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
+            return Response(
+                {
+                    "status": False,
+                    "message": serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class HeroDetailAPIView(APIView):
+
+    # GET a single hero
+    def get(self, request, pk):
+        try:
+            hero = Hero.objects.get(pk)
+            serializer = HeroSerializer(hero)
+            return Response(
+                {
+                    "status": True,
+                    "message": "Successful",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Hero.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Hero not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    # PUT to update a hero
+    def put(self, request, pk):
+        try:
+            hero = Hero.objects.get(pk)
+            serializer = HeroSerializer(hero, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "status": True,
+                        "message": "Successful",
+                        "data": serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {
+                    "status": False,
+                    "message": serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Hero.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Hero not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    # DELETE a hero
+    def delete(self, request, pk):
+        try:
+            hero = Hero.objects.get(pk)
+            serializer = HeroSerializer(hero)
+            hero.delete()
+            return Response(
+                {"status": True, "message": "Successful", "data": serializer.data},
+                status=status.HTTP_200_OK,
+            )
+        except Hero.DoesNotExist:
+            return Response(
+                {"status": False, "message": "Hero not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            message = error_message(e)
+            return Response(
+                {"status": False, "message": message},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+# class ContactAPIView(APIView):
+
+#     # GET all contacts
+#     def get(self, request):
+#         contacts = Contact.objects.all()
+#         serializer = ContactSerializer(contacts, many=True)
+#         return Response(serializer.data)
+
+#     # POST a new contact
+#     def post(self, request):
+#         serializer = ContactSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class ContactDetailAPIView(APIView):
+
+#     # GET a single contact
+#     def get(self, request, pk):
+#         contact = get_object_or_404(Contact, pk=pk)
+#         serializer = ContactSerializer(contact)
+#         return Response(serializer.data)
+
+#     # PUT to update a contact
+#     def put(self, request, pk):
+#         contact = get_object_or_404(Contact, pk=pk)
+#         serializer = ContactSerializer(contact, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     # DELETE a contact
+#     def delete(self, request, pk):
+#         contact = get_object_or_404(Contact, pk=pk)
+#         contact.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)

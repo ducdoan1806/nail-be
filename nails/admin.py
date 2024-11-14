@@ -59,6 +59,14 @@ class WardsAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "code", "district")
 
 
+class HeroAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "description", "image")
+
+
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ("id", "social", "name", "url")
+
+
 admin.site.register(Categories, CategoriesAdmin)
 admin.site.register(Products, ProductsAdmin)
 admin.site.register(ProductDetail, ProductDetailAdmin)
@@ -68,3 +76,5 @@ admin.site.register(Carts, CartsAdmin)
 admin.site.register(City, CitysAdmin)
 admin.site.register(District, DistrictsAdmin)
 admin.site.register(Ward, WardsAdmin)
+admin.site.register(Hero, HeroAdmin)
+admin.site.register(Contact, ContactAdmin)

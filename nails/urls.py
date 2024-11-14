@@ -28,4 +28,6 @@ urlpatterns = [
     path("order/<int:pk>/", OrderDetailView.as_view(), name="order-detail"),
     path("overview/", OverView.as_view(), name="overview"),
     path("address/", AddressView.as_view(), name="address"),
+    path("hero/", HeroAPIView.as_view(), name="hero-list"),
+    path("hero/<int:pk>/", HeroDetailAPIView.as_view(), name="hero-detail"),
 ]

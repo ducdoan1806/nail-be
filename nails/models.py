@@ -1,6 +1,22 @@
 from django.db import models
 
 
+class Hero(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    image = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Contact(models.Model):
+    social = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
+    url = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class City(models.Model):
     name = models.CharField(max_length=255)
     code = models.IntegerField(unique=True)
