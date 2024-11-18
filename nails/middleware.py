@@ -12,45 +12,44 @@ class CustomLoggerMiddleware(MiddlewareMixin):
         request.start_datetime = datetime.now()
 
     def process_response(self, request, response):
-        # Lấy thời gian xử lý
+        # Calculate the duration of the request
         duration = time.time() - request.start_time
 
-        # Lấy thông tin method và URL
+        # Get method, URL, and request start time
         method = request.method
         url = request.get_full_path()
-
-        # Lấy thời gian bắt đầu yêu cầu
         request_time = request.start_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
-        # Tạo message log
-        message = f"[{request_time}] {method} {url} - Status: {response.status_code} - Duration: {duration:.2f}s"
-        if response.data:
-            message = (
-                f"[{request_time}] {method} {url} - Status: {response.status_code} - "
-                f"Duration: {duration:.2f}s - Message: {response.data.get('message', '') if hasattr(response, 'data') else ''}"
-            )
+        # Check if `response` has `data` attribute and safely access message
+        message_text = ""
+        if hasattr(response, "data") and response.data is not None:
+            message_text = response.data.get("message", "")
 
-        # Ghi log thông tin chi tiết
+        # Create log message
+        message = (
+            f"[{request_time}] {method} {url} - Status: {response.status_code} - "
+            f"Duration: {duration:.2f}s - Message: {message_text}"
+        )
+
+        # Log the detailed information
         logger.info(message)
 
         return response
 
     def process_exception(self, request, exception):
-        # Lấy thời gian xử lý
+        # Calculate the duration of the request
         duration = time.time() - request.start_time
 
-        # Lấy thông tin method và URL
+        # Get method, URL, and request start time
         method = request.method
         url = request.get_full_path()
-
-        # Lấy thời gian bắt đầu yêu cầu
         request_time = request.start_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
-        # Tạo message log cho exception
+        # Create log message for the exception
         message = (
             f"[{request_time}] {method} {url} - Exception: {exception} - "
             f"Duration: {duration:.2f}s"
         )
 
-        # Ghi log thông tin chi tiết
+        # Log the exception details
         logger.error(message, exc_info=True)
