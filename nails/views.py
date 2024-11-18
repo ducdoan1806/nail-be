@@ -1,8 +1,8 @@
 from .models import *
 from .serializers import *
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from . import *
@@ -1010,42 +1010,7 @@ class HeroDetailAPIView(APIView):
             )
 
 
-# class ContactAPIView(APIView):
-
-#     # GET all contacts
-#     def get(self, request):
-#         contacts = Contact.objects.all()
-#         serializer = ContactSerializer(contacts, many=True)
-#         return Response(serializer.data)
-
-#     # POST a new contact
-#     def post(self, request):
-#         serializer = ContactSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class ContactDetailAPIView(APIView):
-
-#     # GET a single contact
-#     def get(self, request, pk):
-#         contact = get_object_or_404(Contact, pk=pk)
-#         serializer = ContactSerializer(contact)
-#         return Response(serializer.data)
-
-#     # PUT to update a contact
-#     def put(self, request, pk):
-#         contact = get_object_or_404(Contact, pk=pk)
-#         serializer = ContactSerializer(contact, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     # DELETE a contact
-#     def delete(self, request, pk):
-#         contact = get_object_or_404(Contact, pk=pk)
-#         contact.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]

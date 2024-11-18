@@ -1,8 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
+from rest_framework.routers import DefaultRouter
 
-
+router = DefaultRouter()
+router.register(r"contacts", ContactViewSet, basename="contact")
 urlpatterns = [
+    path("", include(router.urls)),
     path("register/", RegisterView.as_view(), name="register"),
     path("oauth2-info/", AuthInfo.as_view()),
     path("user/", UserView.as_view(), name="user"),
