@@ -23,10 +23,12 @@ class CustomLoggerMiddleware(MiddlewareMixin):
         request_time = request.start_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
         # Tạo message log
-        message = (
-            f"[{request_time}] {method} {url} - Status: {response.status_code} - "
-            f"Duration: {duration:.2f}s - Message: {response.data.get('message', '') if hasattr(response, 'data') else ''}"
-        )
+        message = f"[{request_time}] {method} {url} - Status: {response.status_code} - Duration: {duration:.2f}s"
+        if response.data:
+            message = (
+                f"[{request_time}] {method} {url} - Status: {response.status_code} - "
+                f"Duration: {duration:.2f}s - Message: {response.data.get('message', '') if hasattr(response, 'data') else ''}"
+            )
 
         # Ghi log thông tin chi tiết
         logger.info(message)
