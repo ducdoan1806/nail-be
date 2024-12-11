@@ -50,24 +50,26 @@ services:
              python manage.py import_city_data &&
              python manage.py runserver 0.0.0.0:8000"
 
-  nextjs-web:
-    image: nextjs-image
-    container_name: nextjs-web
-    build:
-      context: ../nail-fe # Đường dẫn đến thư mục chứa Next.js
-      dockerfile: Dockerfile # Dockerfile của Next.js
-    env_file:
-      - ../nail-be/.env
-    volumes:
-      - ../nail-fe:/usr/src/app
-    ports:
-      - 3000:3000
-    depends_on:
-      - django-web # Phụ thuộc vào Django
-    networks:
-      - app-network
+  # nextjs-web:
+  #   image: nextjs-image
+  #   container_name: nextjs-web
+  #   build:
+  #     context: ../nail-fe # Đường dẫn đến thư mục chứa Next.js
+  #     dockerfile: Dockerfile # Dockerfile của Next.js
+  #   env_file:
+  #     - ../nail-be/.env
+  #   volumes:
+  #     - ../nail-fe:/usr/src/app
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - django-web # Phụ thuộc vào Django
+  #   networks:
+  #     - app-network
 
   admin:
+    container_name: admin
+    image: admin
     build:
       context: ../nail-admin
       dockerfile: Dockerfile
@@ -75,7 +77,7 @@ services:
     volumes:
       - ../nail-admin:/usr/src/app
     ports:
-      - 3001:3001
+      - 3000:3000
     depends_on:
       - django-web # Phụ thuộc vào Django
     networks:
@@ -89,7 +91,7 @@ services:
     volumes:
       - ./default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - nextjs-web
+      # - nextjs-web
       - admin
       - django-web
     networks:
