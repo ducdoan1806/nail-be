@@ -74,10 +74,6 @@ services:
       context: ../nail-admin
       dockerfile: Dockerfile
     restart: always
-    volumes:
-      - ../nail-admin:/usr/src/app
-    ports:
-      - 3000:3000
     depends_on:
       - django-web # Phụ thuộc vào Django
     networks:
